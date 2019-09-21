@@ -2,7 +2,7 @@ from simulator import *
 from policies import *
 from mpl_toolkits.mplot3d import axes3d
 import matplotlib.pyplot as plt
-
+import math
 
 sim = Simulator()
 
@@ -34,22 +34,32 @@ def MonteCarlo(policy, episodes, everyVisit):
                 break
     return np.divide(val, times+0.001)
 
-def TD(policy, episodes, gamma, alpha):
+def updateTD(val, history, dealer, gamma, alpha, k):
+    for i in range(len(history)):
+        g = 0
+        for j in range(k):
+            g += math.pow(gamma, j) * (history[i+j][2] if i+j < len(history) else 0)
+        g += math.pow(gamma, k) * (val[history[i+k][0],history[i+k][1],dealer-1] if i+k < len(history) else 0)
+        try:
+            val[history[i][0], history[i][1], dealer-1] += alpha*(g - val[history[i][0], history[i][1], dealer-1])
+        except: pass
+    return val
+
+def TD(policy, episodes, gamma, alpha, k):
     val = np.zeros((4,32,10))
     for e in range(episodes):
         state = sim.reset(); dealer = sim.dealerCard
+        history = []
         while True:
             action = policy(state)
             sp, sc = state.special, state.score()
             state, reward, done = sim.step(action)
-            if not done:
-                val[sp, sc, dealer-1] += alpha*(reward + gamma*val[state.special, state.score(), dealer-1] - val[sp, sc, dealer-1])
+            history.append((sp, sc, reward))
             if done: 
-                try: val[sp, sc, dealer-1] += alpha*(reward - val[sp, sc, dealer-1])
-                except: pass
                 break
+        val = updateTD(val, history, dealer, gamma, alpha, k)
     return val
 
 # val = MonteCarlo(basicPolicy, 700000, True)
-val = TD(basicPolicy, 700000, 0.7, 0.1)
+val = TD(basicPolicy, 700000, 0.7, 0.01, 100)
 plot(val)
