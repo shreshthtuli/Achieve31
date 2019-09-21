@@ -12,6 +12,8 @@ def MonteCarlo(policy, episodes, everyVisit):
             action = policy(state)
             state, reward, done = sim.step(action)
             if (not done or (done and action == "stick")) and (everyVisit or times_episode[state.special, state.score(), dealer-1] == 0):
+                times_episode[state.special, state.score(), dealer-1] += 1  
+            elif dealer > 0 and state.score() < 32:
                 times_episode[state.special, state.score(), dealer-1] += 1    
             if done: 
                 val += reward*times_episode
@@ -41,6 +43,8 @@ def TD(policy, episodes, gamma, alpha, k):
             state, reward, done = sim.step(action)
             history.append((sp, sc, reward))
             if done: 
+                if dealer > 0 and state.score() < 32:
+                    history.append((state.special, state.score(), 0))
                 break
         val = updateTD(val, history, dealer, gamma, alpha, k)
     return val
