@@ -34,7 +34,22 @@ def MonteCarlo(policy, episodes, everyVisit):
                 break
     return np.divide(val, times+0.001)
 
-val = MonteCarlo(basicPolicy, 700000, True)
-print(val)
+def TD(policy, episodes, gamma, alpha):
+    val = np.zeros((4,32,10))
+    for e in range(episodes):
+        state = sim.reset(); dealer = sim.dealerCard
+        while True:
+            action = policy(state)
+            sp, sc = state.special, state.score()
+            state, reward, done = sim.step(action)
+            if not done:
+                val[sp, sc, dealer-1] += alpha*(reward + gamma*val[state.special, state.score(), dealer-1] - val[sp, sc, dealer-1])
+            if done: 
+                try: val[sp, sc, dealer-1] += alpha*(reward - val[sp, sc, dealer-1])
+                except: pass
+                break
+    return val
 
+# val = MonteCarlo(basicPolicy, 700000, True)
+val = TD(basicPolicy, 700000, 0.7, 0.1)
 plot(val)
