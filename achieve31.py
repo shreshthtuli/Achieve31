@@ -1,4 +1,4 @@
-from evaluate import *
+from predict import *
 from control import *
 
 # val = MonteCarlo(basicPolicy, 700000, True)
