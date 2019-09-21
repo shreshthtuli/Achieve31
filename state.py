@@ -26,4 +26,4 @@ class State:
             self.dealer += draw()
 
     def __str__(self):
-        return str(self.special) + ", " + str(self.sum) + ", " + str(self.score())
+        return str(self.special) + ", " + str(self.sum) + ", " + str(self.score()) + ", " + str(self.dealer)
