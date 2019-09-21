@@ -8,7 +8,7 @@ class State:
         self.dealer = dealer
 
     def action(self, card):
-        print("Card = ", card)
+        # print("Card = ", card)
         if card <= 3 and card > 0 and not self.oneTwoThree[card-1]:
             self.oneTwoThree[card-1] = True
             self.special += 1

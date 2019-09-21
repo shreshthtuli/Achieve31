@@ -14,6 +14,7 @@ class Simulator:
         dealerCard = draw()
         self.dealer = State(dealerCard, mySum=dealerCard)
         self.state = State(dealerCard)
+        self.dealerCard = dealerCard
         return self.state
     
     def step(self, action):
