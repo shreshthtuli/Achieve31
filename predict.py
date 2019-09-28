@@ -5,7 +5,7 @@ sim = Simulator()
 
 def MonteCarlo(policy, episodes, everyVisit):
     val, times = initMC()
-    for e in range(episodes):
+    for e in tqdm(range(episodes)):
         times_episode = np.zeros((4,32,10))
         state = sim.reset(); dealer = sim.dealerCard
         while True:
@@ -32,7 +32,7 @@ def updateTD(val, history, dealer, gamma, alpha, k):
 
 def TD(policy, episodes, gamma, alpha, k):
     val = np.zeros((4,32,10))
-    for e in range(episodes):
+    for e in tqdm(range(episodes)):
         state = sim.reset(); dealer = sim.dealerCard
         history = []
         while True:

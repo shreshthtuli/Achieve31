@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import math
 import matplotlib.cm as cmap
+from tqdm import tqdm
 from mpl_toolkits.mplot3d import axes3d
 
 deck = list(range(1,11))+list(range(1, 11))+list(range(-10,0))
@@ -26,6 +27,7 @@ def plot(val):
     for i in range(4):
         hf = plt.figure()
         ha = hf.add_subplot(111, projection='3d')
+        plt.xticks(range(nx), range(1,nx+1))
         X, Y = np.meshgrid(x, y) 
         ha.plot_wireframe(X, Y, val[i])
         ha.set_title('Wireframe for special cards = ' + str(i));
@@ -39,6 +41,7 @@ def plotQ(q):
         for j in range(2):
             hf = plt.figure()
             ha = hf.add_subplot(111, projection='3d')
+            plt.xticks(range(nx), range(1,nx+1))
             X, Y = np.meshgrid(x, y) 
             ha.plot_wireframe(X, Y, q[j,i])
             action = 'hit' if j == 0 else 'stick'
@@ -52,6 +55,7 @@ def plotMap(q):
     for i in range(4):
         hf = plt.figure()
         ha = hf.add_subplot(111)
+        plt.xticks(range(nx), range(1,nx+1))
         ha.imshow(np.argmax(q[:,0,:,:], axis=0), cmap=cmap.hot)
         ha.set_title('Optimum action = ' + str(i));
     plt.show()
