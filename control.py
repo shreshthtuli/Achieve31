@@ -51,6 +51,7 @@ def updateQLambda(q, history, dealer, gamma, alpha, l):
 def sarsa(k, episodes, gamma, alpha, e, adaptive=False):
     q = np.zeros((2,4,32,10))
     e1 = e
+    rewards = []
     for episode in tqdm(range(episodes)):
         if adaptive:
             e = e1/(episode + 1)
@@ -64,12 +65,14 @@ def sarsa(k, episodes, gamma, alpha, e, adaptive=False):
             history.append((sp, sc, convertAction(a), reward)) # sars'a'
             a = aPrime
             if done: 
+                rewards.append(reward)
                 break
         q = updateQ(q, history, dealer, gamma, alpha, k)
-    return q
+    return q, rewards
 
 def Q(k, episodes, gamma, alpha, e):
     q = np.zeros((2,4,32,10))
+    rewards = []
     for episode in tqdm(range(episodes)):
         state = sim.reset(); dealer = sim.dealerCard
         history = []
@@ -82,12 +85,16 @@ def Q(k, episodes, gamma, alpha, e):
             elif dealer > 0 and sc < 32:
                 q[convertAction(a), sp, sc, dealer-1] += alpha*(reward - q[convertAction(a), sp, sc, dealer-1])
             if done: 
+                rewards.append(reward)
                 break
-    return q
+    return q, rewards
 
-def tdLambda(episodes, gamma, alpha, e, l):
+def tdLambda(episodes, gamma, alpha, e, l, adaptive=False):
     q = np.zeros((2,4,32,10))
+    rewards = []; e1 = e
     for episode in tqdm(range(episodes)):
+        if adaptive:
+            e = e1/(episode + 1)
         state = sim.reset(); dealer = sim.dealerCard
         history = []
         a = eGreedy(state, q, e, dealer) if dealer > 0 else 'hit' # a
@@ -98,6 +105,7 @@ def tdLambda(episodes, gamma, alpha, e, l):
             history.append((sp, sc, convertAction(a), reward)) # sars'a'
             a = aPrime
             if done: 
+                rewards.append(reward)
                 break
         q = updateQLambda(q, history, dealer, gamma, alpha, l)
-    return q
+    return q, rewards

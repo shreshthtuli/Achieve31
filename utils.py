@@ -3,6 +3,8 @@ import matplotlib.pyplot as plt
 import math
 import matplotlib.cm as cmap
 from tqdm import tqdm
+import seaborn as sns
+import pandas as pd
 from mpl_toolkits.mplot3d import axes3d
 
 deck = list(range(1,11))+list(range(1, 11))+list(range(-10,0))
@@ -58,4 +60,13 @@ def plotMap(q):
         plt.xticks(range(nx), range(1,nx+1))
         ha.imshow(np.argmax(q[:,0,:,:], axis=0), cmap=cmap.hot)
         ha.set_title('Optimum action = ' + str(i));
+    plt.show()
+
+def plotPerf(df, hue):
+    sns.lmplot(x='episode',y='reward',data=df, fit_reg=True, order=2, hue=hue) 
+    plt.show()
+
+def plotPerfBar(df, hue, title):
+    sns.set(style="whitegrid")
+    sns.barplot(x='alpha',y='reward',data=df, hue=hue, ci=5).set_title(title)
     plt.show()
