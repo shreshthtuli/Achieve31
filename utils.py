@@ -64,7 +64,7 @@ def plotMap(q):
     plt.show()
 
 def plotPerf(df, hue):
-    sns.lmplot(x='episode',y='reward',data=df, fit_reg=True, lpoly=True, hue=hue) 
+    sns.lmplot(x='episode',y='reward',data=df, fit_reg=True, lowess=True, hue=hue) 
     plt.show()
 
 def plotPerfBar(df, hue, title):
