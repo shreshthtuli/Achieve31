@@ -31,7 +31,8 @@ def plot(val):
         ha = hf.add_subplot(111, projection='3d')
         plt.xticks(range(nx), range(1,nx+1))
         X, Y = np.meshgrid(x, y) 
-        ha.plot_wireframe(X, Y, val[i])
+        ha.plot_wireframe(X, Y, val[i], color='black')
+        # ha.plot_surface(X, Y, val[i], color='w', shade=False, alpha=0.5)
         ha.set_title('Wireframe for special cards = ' + str(i));
     plt.show()
 
@@ -63,7 +64,7 @@ def plotMap(q):
     plt.show()
 
 def plotPerf(df, hue):
-    sns.lmplot(x='episode',y='reward',data=df, fit_reg=True, order=2, hue=hue) 
+    sns.lmplot(x='episode',y='reward',data=df, fit_reg=True, lpoly=True, hue=hue) 
     plt.show()
 
 def plotPerfBar(df, hue, title):

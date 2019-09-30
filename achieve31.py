@@ -7,7 +7,7 @@ from statistics import stdev, mean
 def plotPerformance(algos, runs, episodes):
     df = pd.DataFrame() 
     for algo in algos:
-        avgRewards = [0]*runs
+        avgRewards = [0]*episodes
         for i in range(runs):
             rewards = []
             if algo[0] == 'sarsa':
@@ -18,7 +18,7 @@ def plotPerformance(algos, runs, episodes):
                 _, rewards = tdLambda(episodes, 0.7, 0.01, 0.1, algo[1])
             avgRewards = list(map(add, avgRewards, rewards))
         avgRewards[:] = [(x + 0.0) / runs for x in avgRewards]
-        temp = pd.DataFrame(list(zip(avgRewards, range(runs), [algo[0]]*runs)), 
+        temp = pd.DataFrame(list(zip(avgRewards, range(episodes), [algo[0]]*episodes)), 
                columns =['reward', 'episode', 'algo']) 
         df = pd.concat([df, temp])
     print(df)
@@ -67,6 +67,6 @@ def plotValueFunction(algo, episodes, alpha):
 # plotMap(q)
 
 
-# plotPerformance([['sarsa', 5, False], ['q'], ['tdLambda', 5]], 100, 200)
+plotPerformance([['sarsa', 5, True], ['q'], ['tdLambda', 0.5]], 200, 100)
 # plotPerformanceAlpha(['q', 5, True], 100000, 100, [0.1, 0.2, 0.3, 0.4, 0.5])
-plotValueFunction(['tdLambda', 0.5, True], 400000, 0.1)
+# plotValueFunction(['tdLambda', 0.5, True], 400000, 0.1)
