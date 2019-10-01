@@ -89,7 +89,7 @@ def Q(k, episodes, gamma, alpha, e):
             state, reward, done = sim.step(a) # s', r
             if (not done or (done and a == "stick")):
                 q[convertAction(a), sp, sh+10*sp, dealer-1] += alpha*(reward + gamma * np.max(q[:,state.special,state.sum+10*state.special, dealer-1]) - q[convertAction(a), sp, sh+10*sp, dealer-1])
-            elif dealer > 0 and sh < 32:
+            elif dealer > 0:
                 q[convertAction(a), sp, sh+10*sp, dealer-1] += alpha*(reward - q[convertAction(a), sp, sh+10*sp, dealer-1])
             if done: 
                 rewards.append(reward)

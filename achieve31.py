@@ -174,21 +174,22 @@ def plotValueFunction(algo, episodes, alpha):
 # plotPerformanceAlpha([['sarsa1', 1, False], 
 #              ['sarsa10', 10, False], 
 #              ['sarsa100', 100, False], 
-#              ['sarsa1000', 1000, False]], 100000, 10, [0.1, 0.2, 0.3, 0.4, 0.5])
+#              ['sarsa1000', 1000, False]], 100000, 100, [0.1, 0.2, 0.3, 0.4, 0.5])
 
 # plotPerformanceAlpha([['sarsa1', 1, True], 
 #              ['sarsa10', 10, True], 
 #              ['sarsa100', 100, True], 
 #              ['sarsa1000', 1000, True]], 100000, 10, [0.1, 0.2, 0.3, 0.4, 0.5])
 
-# plotPerformanceAlpha([['sarsa10', 10, False], 
-#              ['sarsa10decay', 10, True], 
-#              ['q'], 
-#              ['tdLambda', 0.5, True]], 100000, 10, [0.1, 0.2, 0.3, 0.4, 0.5])
+plotPerformanceAlpha([['sarsa10', 10, False], 
+             ['sarsa10decay', 10, True], 
+             ['q'], 
+             ['tdLambda', 0.5, True]], 100000, 100, [0.1, 0.2, 0.3, 0.4, 0.5])
 
 
 
 ############################################################
 ################### Plot value function ####################
 ############################################################
-plotValueFunction(['tdLambda', 0.5, True], 400000, 0.1)
+# plotValueFunction(['tdLambda', 0.5, True], 400000, 0.1)
+# plotValueFunction(['sarsa1', 1, True], 400000, 0.1)
