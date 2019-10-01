@@ -6,19 +6,19 @@ sim = Simulator()
 def MonteCarlo(policy, episodes, everyVisit):
     val, times = initMC()
     for e in tqdm(range(episodes)):
-        times_episode = np.zeros((4,32,10))
+        times_episode = np.zeros((4,62,10))
         state = sim.reset(); dealer = sim.dealerCard
         while True:
-            sp, sc = state.special, state.score()
+            sp, sh = state.special, state.sum
             action = policy(state)
             state, reward, done = sim.step(action)
-            if dealer > 0 and sc < 32 and (everyVisit or times_episode[sp, sc, dealer-1] == 0):
-                times_episode[sp, sc, dealer-1] += 1    
+            if dealer > 0 and sh < 32 and (everyVisit or times_episode[sp, sh+10*sp, dealer-1] == 0):
+                times_episode[sp, sh+10*sp, dealer-1] += 1    
             if done:   
                 val += reward*times_episode
                 times += times_episode
                 break
-    return np.divide(val, times+0.001)
+    return np.divide(val, times+0.00001)
 
 def updateTD(val, history, dealer, gamma, alpha, k):
     for i in range(len(history)):

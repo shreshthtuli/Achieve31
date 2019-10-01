@@ -55,9 +55,9 @@ def plotValueFunction(algo, episodes, alpha):
     plot(val)
     
 
-# val = MonteCarlo(basicPolicy, 1000000, True)
+val = MonteCarlo(basicPolicy, 1000000, True)
 # val = TD(basicPolicy, 1000000, 0.7, 0.01, 10)
-# plot(val)
+plot(val)
 
 
 # q = sarsa(5, 1000000, 0.7, 0.01, 0.1, False)
@@ -67,6 +67,6 @@ def plotValueFunction(algo, episodes, alpha):
 # plotMap(q)
 
 
-plotPerformance([['sarsa', 5, True], ['q'], ['tdLambda', 0.5]], 200, 100)
+# plotPerformance([['sarsa', 5, True], ['q'], ['tdLambda', 0.5]], 200, 100)
 # plotPerformanceAlpha(['q', 5, True], 100000, 100, [0.1, 0.2, 0.3, 0.4, 0.5])
 # plotValueFunction(['tdLambda', 0.5, True], 400000, 0.1)

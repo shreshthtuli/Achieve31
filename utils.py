@@ -6,6 +6,8 @@ from tqdm import tqdm
 import seaborn as sns
 import pandas as pd
 from mpl_toolkits.mplot3d import axes3d
+import matplotlib.ticker as ticker
+from matplotlib import cm
 
 deck = list(range(1,11))+list(range(1, 11))+list(range(-10,0))
 
@@ -13,8 +15,8 @@ def draw():
     return np.random.choice(deck)
 
 def initMC():
-    val = np.zeros((4,32,10))
-    times = np.zeros((4,32,10))
+    val = np.zeros((4,62,10))
+    times = np.zeros((4,62,10))
     return val, times
 
 def basicPolicy(state):
@@ -25,14 +27,19 @@ def basicPolicy(state):
 def plot(val):
     nx, ny = 10, 32
     x = range(nx)
-    y = range(ny)
     for i in range(4):
+        y = range(-10*i,ny)
         hf = plt.figure()
         ha = hf.add_subplot(111, projection='3d')
-        plt.xticks(range(nx), range(1,nx+1))
+        plt.xticks(x, range(1,nx+1))
+        plt.xlabel('Dealer Card')
+        plt.ylabel('Player Sum')
+        ha.set_zlabel('Value Function')
+        ha.yaxis.set_major_locator(ticker.MultipleLocator(5))
         X, Y = np.meshgrid(x, y) 
-        ha.plot_wireframe(X, Y, val[i], color='black')
-        # ha.plot_surface(X, Y, val[i], color='w', shade=False, alpha=0.5)
+        print(i, np.shape(X), np.shape(Y), np.shape(val[i]))
+        ha.plot_wireframe(X, Y, val[i,0:ny+10*i,:], color='black')
+        ha.plot_surface(X, Y, val[i,0:ny+10*i,:],cmap=cm.coolwarm)
         ha.set_title('Wireframe for special cards = ' + str(i));
     plt.show()
 
