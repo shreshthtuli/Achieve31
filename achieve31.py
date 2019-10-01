@@ -4,6 +4,21 @@ from operator import add
 import pandas as pd
 from statistics import stdev, mean
 
+
+def plotPredictionMC(runs):
+    val = np.zeros((4,62,10))
+    for i in range(runs):
+        v = MonteCarlo(basicPolicy, 1000000, True)
+        val += v
+    plot(np.divide(val, runs))
+
+def plotPredictionTD(runs):
+    val = np.zeros((4,62,10))
+    for i in range(runs):
+        v = TD(basicPolicy, 1000000, 0.7, 0.01, 10)
+        val += v
+    plot(np.divide(val, runs))
+
 def plotPerformance(algos, runs, episodes):
     df = pd.DataFrame() 
     for algo in algos:
@@ -55,10 +70,11 @@ def plotValueFunction(algo, episodes, alpha):
     plot(val)
     
 
-val = MonteCarlo(basicPolicy, 1000000, True)
+# val = MonteCarlo(basicPolicy, 1000000, True)
 # val = TD(basicPolicy, 1000000, 0.7, 0.01, 10)
-plot(val)
+# plot(val)
 
+plotPredictionTD(1)
 
 # q = sarsa(5, 1000000, 0.7, 0.01, 0.1, False)
 # q = Q(5, 1000000, 0.7, 0.01, 0.1)
