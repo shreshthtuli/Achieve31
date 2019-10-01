@@ -78,7 +78,7 @@ def plotMap(q):
     plt.show()
 
 def plotPerf(df, hue, x, y):
-    sns.lmplot(x=x,y=y,data=df, fit_reg=True, lowess=True, hue=hue) 
+    sns.lineplot(x=x,y=y,data=df, hue=hue) 
     plt.show()
 
 def plotPerfBar(df, title, x, y):
