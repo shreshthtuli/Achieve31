@@ -4,7 +4,6 @@ from operator import add
 import pandas as pd
 from statistics import stdev, mean
 
-
 def plotPredictionMC(runs):
     val = np.zeros((4,62,10))
     for i in range(runs):
@@ -40,26 +39,30 @@ def plotRewards(algos, runs, episodes):
     print(df)
     plotPerf(df, 'algo', 'episode', 'reward')
 
-def run(q, episodes):
+def run(q, episodes, mycards, dealercards):
     totalReward = 0.0
-    mycards = [draw() for i in range(episodes)]
-    dealercards = [draw() for i in range(episodes)]
     for i in tqdm(range(episodes)):
         state = sim.set(mycards[i], dealercards[i]); dealer = sim.dealerCard
+        print('dealer =', dealer)
         while True:
             sp, sh = state.special, state.sum
+            print(sp, sh)
             if dealer > 0:
                 action = np.argmax(q[:,sp,sh,dealer-1])
             else:
                 action = 'stick'
             state, reward, done = sim.step(revertAction(action))
+            print(revertAction(action), state.special, state.sum)
             if done:   
                 totalReward += reward
+                print('reward = ', reward)
                 break
     return totalReward / episodes
 
 def plotPerformanceTest(algos, train, test):
     df = pd.DataFrame() 
+    mycards = [draw() for i in range(test)]
+    dealercards = [draw() for i in range(test)]
     for algo in algos:
         avgReward = 0; devReward = 0
         q = []
@@ -69,7 +72,7 @@ def plotPerformanceTest(algos, train, test):
             q, _ = Q(5, train, 0.7, 0.01, 0.1)
         elif algo[0] == 'tdLambda':
             q, _ = tdLambda(train, 0.7, 0.01, 0.1, algo[1])
-        temp = pd.DataFrame(list(zip([run(q, test)], [algo[0]])), 
+        temp = pd.DataFrame(list(zip([run(q, test, mycards, dealercards)], [algo[0]])), 
                columns =['reward', 'algo']) 
         df = pd.concat([df, temp])
     print(df)
@@ -77,6 +80,8 @@ def plotPerformanceTest(algos, train, test):
 
 def plotPerformanceAlpha(algos, train, test, alphas):
     df = pd.DataFrame() 
+    mycards = [draw() for i in range(test)]
+    dealercards = [draw() for i in range(test)]
     for algo in algos:
         for alpha in alphas:
             avgReward = 0; devReward = 0
@@ -87,7 +92,7 @@ def plotPerformanceAlpha(algos, train, test, alphas):
                 q, _ = Q(5, train, 0.7, alpha, 0.1)
             elif algo[0] == 'tdLambda':
                 q, _ = tdLambda(train, 0.7, alpha, 0.1, algo[1])
-            temp = pd.DataFrame(list(zip([run(q, test)], [alpha], [algo[0]])), 
+            temp = pd.DataFrame(list(zip([run(q, test, mycards, dealercards)], [alpha], [algo[0]])), 
                 columns =['reward', 'alpha', 'algo']) 
             df = pd.concat([df, temp])
     print(df)
@@ -122,5 +127,5 @@ def plotValueFunction(algo, episodes, alpha):
 # plotRewards([['sarsa', 5, True], ['q'], ['tdLambda', 0.5]], 200, 200)
 # plotRewards([['sarsa', 1, False], ['q'], ['tdLambda', 0.5]], 10, 20000)
 # plotPerformanceTest([['sarsa', 5, True], ['q'], ['tdLambda', 0.5]], 1000000, 100)
-plotPerformanceAlpha([['sarsa', 1, True]], 1000000, 10, [0.1, 0.2, 0.3, 0.4, 0.5])
+plotPerformanceAlpha([['sarsa', 1, False]], 100000, 10, [0.1, 0.2, 0.3, 0.4, 0.5])
 # plotValueFunction(['tdLambda', 0.5, True], 400000, 0.1)

@@ -17,7 +17,7 @@ def revertAction(a):
 def eGreedy(state, q, e, dealer):
     if random() < e:
         return np.random.choice(["hit", "stick"])
-    if q[0, state.special, state.sum, dealer-1] >= q[1, state.special, state.sum, dealer-1]:
+    if q[0, state.special, state.sum+10*state.special, dealer-1] >= q[1, state.special, state.sum+10*state.special, dealer-1]:
         return "hit"
     return "stick"
 
