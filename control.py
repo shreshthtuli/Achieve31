@@ -9,6 +9,11 @@ def convertAction(a):
         return 0
     return 1
 
+def revertAction(a):
+    if a == 0:
+        return 'hit'
+    return 'stick'
+
 def eGreedy(state, q, e, dealer):
     if random() < e:
         return np.random.choice(["hit", "stick"])

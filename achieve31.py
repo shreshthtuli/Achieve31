@@ -19,43 +19,79 @@ def plotPredictionTD(runs):
         val += v
     plot(np.divide(val, runs))
 
-def plotPerformance(algos, runs, episodes):
+def plotRewards(algos, runs, episodes):
     df = pd.DataFrame() 
     for algo in algos:
         avgRewards = [0]*episodes
         for i in range(runs):
             rewards = []
             if algo[0] == 'sarsa':
-                _, rewards = sarsa(algo[1], episodes, 0.7, 0.01, 0.1, algo[2])
+                _, rewards = sarsa(algo[1], episodes, 0.7, 0.05, 0.1, algo[2])
             elif algo[0] == 'q':
-                _, rewards = Q(5, episodes, 0.7, 0.01, 0.1)
+                _, rewards = Q(5, episodes, 0.7, 0.05, 0.1)
             elif algo[0] == 'tdLambda':
                 _, rewards = tdLambda(episodes, 0.7, 0.01, 0.1, algo[1])
             avgRewards = list(map(add, avgRewards, rewards))
         avgRewards[:] = [(x + 0.0) / runs for x in avgRewards]
+        simplePlot(avgRewards[::100])
         temp = pd.DataFrame(list(zip(avgRewards, range(episodes), [algo[0]]*episodes)), 
                columns =['reward', 'episode', 'algo']) 
         df = pd.concat([df, temp])
     print(df)
-    plotPerf(df, 'algo')
+    plotPerf(df, 'algo', 'episode', 'reward')
 
-def plotPerformanceAlpha(algo, train, test, alphas):
+def run(q, episodes):
+    totalReward = 0.0
+    mycards = [draw() for i in range(episodes)]
+    dealercards = [draw() for i in range(episodes)]
+    for i in tqdm(range(episodes)):
+        state = sim.set(mycards[i], dealercards[i]); dealer = sim.dealerCard
+        while True:
+            sp, sh = state.special, state.sum
+            if dealer > 0:
+                action = np.argmax(q[:,sp,sh,dealer-1])
+            else:
+                action = 'stick'
+            state, reward, done = sim.step(revertAction(action))
+            if done:   
+                totalReward += reward
+                break
+    return totalReward / episodes
+
+def plotPerformanceTest(algos, train, test):
     df = pd.DataFrame() 
-    for alpha in alphas:
+    for algo in algos:
         avgReward = 0; devReward = 0
-        rewards = []
+        q = []
         if algo[0] == 'sarsa':
-            _, rewards = sarsa(algo[1], train+test, 0.7, alpha, 0.1, algo[2])
+            q, _ = sarsa(algo[1], train, 0.7, 0.01, 0.1, algo[2])
         elif algo[0] == 'q':
-            _, rewards = Q(5, train+test, 0.7, alpha, 0.1)
+            q, _ = Q(5, train, 0.7, 0.01, 0.1)
         elif algo[0] == 'tdLambda':
-             _, rewards = tdLambda(train+test, 0.7, alpha, 0.1, algo[1])
-        # avgReward, devReward = mean(rewards), stdev(rewards)
-        temp = pd.DataFrame(list(zip(rewards[-test:], [str(alpha)]*test)), 
-               columns =['reward', 'alpha']) 
+            q, _ = tdLambda(train, 0.7, 0.01, 0.1, algo[1])
+        temp = pd.DataFrame(list(zip([run(q, test)], [algo[0]])), 
+               columns =['reward', 'algo']) 
         df = pd.concat([df, temp])
     print(df)
-    plotPerfBar(df, 'alpha', algo[0])
+    plotPerfBar(df, 'Comparison of algos', 'algo', 'reward')
+
+def plotPerformanceAlpha(algos, train, test, alphas):
+    df = pd.DataFrame() 
+    for algo in algos:
+        for alpha in alphas:
+            avgReward = 0; devReward = 0
+            rewards = []
+            if algo[0] == 'sarsa':
+                q, _ = sarsa(algo[1], train, 0.7, alpha, 0.1, algo[2])
+            elif algo[0] == 'q':
+                q, _ = Q(5, train, 0.7, alpha, 0.1)
+            elif algo[0] == 'tdLambda':
+                q, _ = tdLambda(train, 0.7, alpha, 0.1, algo[1])
+            temp = pd.DataFrame(list(zip([run(q, test)], [alpha], [algo[0]])), 
+                columns =['reward', 'alpha', 'algo']) 
+            df = pd.concat([df, temp])
+    print(df)
+    plotPerf(df, 'algo', 'alpha', 'reward')
 
 def plotValueFunction(algo, episodes, alpha):
     val = np.zeros((4,32,10))
@@ -83,6 +119,8 @@ def plotValueFunction(algo, episodes, alpha):
 # plotMap(q)
 
 
-plotPerformance([['sarsa', 5, True], ['q'], ['tdLambda', 0.5]], 200, 100)
-# plotPerformanceAlpha(['q', 5, True], 100000, 100, [0.1, 0.2, 0.3, 0.4, 0.5])
+# plotRewards([['sarsa', 5, True], ['q'], ['tdLambda', 0.5]], 200, 200)
+# plotRewards([['sarsa', 1, False], ['q'], ['tdLambda', 0.5]], 10, 20000)
+# plotPerformanceTest([['sarsa', 5, True], ['q'], ['tdLambda', 0.5]], 1000000, 100)
+plotPerformanceAlpha([['sarsa', 1, True]], 1000000, 10, [0.1, 0.2, 0.3, 0.4, 0.5])
 # plotValueFunction(['tdLambda', 0.5, True], 400000, 0.1)

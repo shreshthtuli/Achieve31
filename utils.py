@@ -77,11 +77,15 @@ def plotMap(q):
         ha.set_title('Optimum action = ' + str(i));
     plt.show()
 
-def plotPerf(df, hue):
-    sns.lmplot(x='episode',y='reward',data=df, fit_reg=True, order=2, hue=hue) 
+def plotPerf(df, hue, x, y):
+    sns.lmplot(x=x,y=y,data=df, fit_reg=True, lowess=True, hue=hue) 
     plt.show()
 
-def plotPerfBar(df, hue, title):
+def plotPerfBar(df, title, x, y):
     sns.set(style="whitegrid")
-    sns.barplot(x='alpha',y='reward',data=df, hue=hue, ci=5).set_title(title)
+    sns.barplot(x=x,y=y,data=df).set_title(title)
+    plt.show()
+
+def simplePlot(rewards):
+    plt.plot(rewards)
     plt.show()

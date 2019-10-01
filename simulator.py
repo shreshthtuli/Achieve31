@@ -17,11 +17,20 @@ class Simulator:
         self.dealerCard = dealerCard
         return self.state
     
+    def set(self, mycard, dealercard):
+        self.dealer = State(dealercard, mySum=dealercard)
+        self.state = State(dealercard, mySum=mycard)
+        self.dealerCard = dealercard
+        return self.state
+    
     def step(self, action):
         if action == "hit":
             self.state.action(draw())
         elif action == "stick":
             self.state.dealer = self.runDealer()
+        else:
+            print("Invalid action!", action)
+            exit(0)
         sc = self.state.score()
         if (sc < 0 or sc > 31) and self.state.dealer > 0:
             return self.state, -1, True
