@@ -25,7 +25,7 @@ def updateTD(val, history, dealer, gamma, alpha, k):
         g = 0
         for j in range(k):
             g += math.pow(gamma, j) * (history[i+j][2] if i+j < len(history) else 0)
-        g += math.pow(gamma, k) * (val[history[i+k][0],history[i+k][1],dealer-1] if i+k < len(history) else 0)
+        g += math.pow(gamma, k) * (val[history[i+k][0],history[i+k][1]+10*history[i+k][0],dealer-1] if i+k < len(history) else 0)
         if dealer > 0:
             sp, sh = history[i][0], history[i][1]
             val[sp, sh+10*sp, dealer-1] += alpha*(g - val[sp, sh+10*sp, dealer-1])

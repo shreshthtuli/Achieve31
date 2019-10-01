@@ -12,7 +12,7 @@ def convertAction(a):
 def eGreedy(state, q, e, dealer):
     if random() < e:
         return np.random.choice(["hit", "stick"])
-    if q[0, state.special, state.score(), dealer-1] >= q[1, state.special, state.score(), dealer-1]:
+    if q[0, state.special, state.sum, dealer-1] >= q[1, state.special, state.sum, dealer-1]:
         return "hit"
     return "stick"
 
@@ -21,9 +21,10 @@ def updateQ(q, history, dealer, gamma, alpha, k):
         g = 0
         for j in range(k):
             g += math.pow(gamma, j) * (history[i+j][3] if i+j < len(history) else 0)
-        g += math.pow(gamma, k) * (q[history[i+k][2],history[i+k][0],history[i+k][1],dealer-1] if i+k < len(history) else 0)
+        g += math.pow(gamma, k) * (q[history[i+k][2],history[i+k][0],history[i+k][1]+10*history[i+k][0],dealer-1] if i+k < len(history) else 0)
         if dealer > 0:
-            q[history[i][2], history[i][0], history[i][1], dealer-1] += alpha*(g - q[history[i][2], history[i][0], history[i][1], dealer-1])
+            sp, sh, a = history[i][0], history[i][1], history[i][2]
+            q[a, sp, sh+10*sp, dealer-1] += alpha*(g - q[a, sp, sh+10*sp, dealer-1])
     return q
 
 def updateQLambda(q, history, dealer, gamma, alpha, l):
@@ -34,7 +35,7 @@ def updateQLambda(q, history, dealer, gamma, alpha, l):
             g = 0
             for j in range(k):
                 g += math.pow(gamma, j) * (history[i+j][3] if i+j < len(history) else 0)
-            g += math.pow(gamma, k-1) * (q[history[i+k][2],history[i+k][0],history[i+k][1],dealer-1] if i+k < len(history) else 0)
+            g += math.pow(gamma, k-1) * (q[history[i+k][2],history[i+k][0],history[i+k][1]+10*history[i+k][0],dealer-1] if i+k < len(history) else 0)
             gLambda = (1 - l) * math.pow(l, k-1) * g; # s += (1 - l) * math.pow(l, k-1); print("left",k-1)
         g = 0; k = len(history)-i
         for j in range(k):
@@ -44,12 +45,13 @@ def updateQLambda(q, history, dealer, gamma, alpha, l):
         gLambda += math.pow(l, k) * g; # s += math.pow(l, k); print("done",k)
         # print(s)
         try:
-            q[history[i][2], history[i][0], history[i][1], dealer-1] += alpha*(gLambda - q[history[i][2], history[i][0], history[i][1], dealer-1])
+            sp, sh, a = history[i][0], history[i][1], history[i][2]
+            q[a, sp, sh+10*sp, dealer-1] += alpha*(gLambda - q[a, sp, sh+10*sp, dealer-1])
         except: pass
     return q
 
 def sarsa(k, episodes, gamma, alpha, e, adaptive=False):
-    q = np.zeros((2,4,32,10))
+    q = np.zeros((2,4,62,10))
     e1 = e
     rewards = []
     for episode in tqdm(range(episodes)):
@@ -59,10 +61,10 @@ def sarsa(k, episodes, gamma, alpha, e, adaptive=False):
         history = []
         a = eGreedy(state, q, e, dealer) if dealer > 0 else 'hit' # a
         while True:
-            sp, sc = state.special, state.score() # s
+            sp, sh = state.special, state.sum # s
             state, reward, done = sim.step(a) # s', r
             aPrime = eGreedy(state, q, e, dealer) if not done else 'hit' # a'
-            history.append((sp, sc, convertAction(a), reward)) # sars'a'
+            history.append((sp, sh, convertAction(a), reward)) # sars'a'
             a = aPrime
             if done: 
                 rewards.append(reward)
@@ -71,26 +73,26 @@ def sarsa(k, episodes, gamma, alpha, e, adaptive=False):
     return q, rewards
 
 def Q(k, episodes, gamma, alpha, e):
-    q = np.zeros((2,4,32,10))
+    q = np.zeros((2,4,62,10))
     rewards = []
     for episode in tqdm(range(episodes)):
         state = sim.reset(); dealer = sim.dealerCard
         history = []
         while True:
-            sp, sc = state.special, state.score() # s
+            sp, sh = state.special, state.sum # s
             a = eGreedy(state, q, e, dealer) if dealer > 0 else 'hit' # a
             state, reward, done = sim.step(a) # s', r
             if (not done or (done and a == "stick")):
-                q[convertAction(a), sp, sc, dealer-1] += alpha*(reward + gamma * np.max(q[:,state.special,state.score(),dealer-1]) - q[convertAction(a), sp, sc, dealer-1])
-            elif dealer > 0 and sc < 32:
-                q[convertAction(a), sp, sc, dealer-1] += alpha*(reward - q[convertAction(a), sp, sc, dealer-1])
+                q[convertAction(a), sp, sh+10*sp, dealer-1] += alpha*(reward + gamma * np.max(q[:,state.special,state.sum+10*state.special, dealer-1]) - q[convertAction(a), sp, sh+10*sp, dealer-1])
+            elif dealer > 0 and sh < 32:
+                q[convertAction(a), sp, sh+10*sp, dealer-1] += alpha*(reward - q[convertAction(a), sp, sh+10*sp, dealer-1])
             if done: 
                 rewards.append(reward)
                 break
     return q, rewards
 
 def tdLambda(episodes, gamma, alpha, e, l, adaptive=False):
-    q = np.zeros((2,4,32,10))
+    q = np.zeros((2,4,62,10))
     rewards = []; e1 = e
     for episode in tqdm(range(episodes)):
         if adaptive:
@@ -99,10 +101,10 @@ def tdLambda(episodes, gamma, alpha, e, l, adaptive=False):
         history = []
         a = eGreedy(state, q, e, dealer) if dealer > 0 else 'hit' # a
         while True:
-            sp, sc = state.special, state.score() # s
+            sp, sh = state.special, state.sum # s
             state, reward, done = sim.step(a) # s', r
             aPrime = eGreedy(state, q, e, dealer) if not done else 'hit' # a'
-            history.append((sp, sc, convertAction(a), reward)) # sars'a'
+            history.append((sp, sh, convertAction(a), reward)) # sars'a'
             a = aPrime
             if done: 
                 rewards.append(reward)

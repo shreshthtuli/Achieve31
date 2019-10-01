@@ -74,15 +74,15 @@ def plotValueFunction(algo, episodes, alpha):
 # val = TD(basicPolicy, 1000000, 0.7, 0.01, 10)
 # plot(val)
 
-plotPredictionTD(1)
+# plotPredictionTD(1)
 
-# q = sarsa(5, 1000000, 0.7, 0.01, 0.1, False)
-# q = Q(5, 1000000, 0.7, 0.01, 0.1)
-# q = tdLambda(1000000, 0.7, 0.01, 0.1, 0.5)
+# q, _ = sarsa(5, 100000, 0.7, 0.01, 0.1, False)
+# q, _ = Q(5, 1000000, 0.7, 0.01, 0.1)
+# q, _ = tdLambda(1000000, 0.7, 0.01, 0.1, 0.5)
 # plotQ(q)
 # plotMap(q)
 
 
-# plotPerformance([['sarsa', 5, True], ['q'], ['tdLambda', 0.5]], 200, 100)
+plotPerformance([['sarsa', 5, True], ['q'], ['tdLambda', 0.5]], 200, 100)
 # plotPerformanceAlpha(['q', 5, True], 100000, 100, [0.1, 0.2, 0.3, 0.4, 0.5])
 # plotValueFunction(['tdLambda', 0.5, True], 400000, 0.1)

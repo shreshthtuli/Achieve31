@@ -37,41 +37,48 @@ def plot(val):
         ha.set_zlabel('Value Function')
         ha.yaxis.set_major_locator(ticker.MultipleLocator(5))
         X, Y = np.meshgrid(x, y) 
-        print(i, np.shape(X), np.shape(Y), np.shape(val[i]))
         ha.plot_wireframe(X, Y, val[i,0:ny+10*i,:], color='black')
         ha.plot_surface(X, Y, val[i,0:ny+10*i,:],cmap=cm.coolwarm)
-        ha.set_title('Wireframe for special cards = ' + str(i));
+        ha.set_title('Surface plot for special cards = ' + str(i));
     plt.show()
 
 def plotQ(q):
     nx, ny = 10, 32
     x = range(nx)
-    y = range(ny)
     for i in range(4):
+        y = range(-10*i,ny)
         for j in range(2):
             hf = plt.figure()
             ha = hf.add_subplot(111, projection='3d')
             plt.xticks(range(nx), range(1,nx+1))
+            plt.xlabel('Dealer Card')
+            plt.ylabel('Player Sum')
+            ha.set_zlabel('Q Value Function')
+            ha.yaxis.set_major_locator(ticker.MultipleLocator(5))
             X, Y = np.meshgrid(x, y) 
-            ha.plot_wireframe(X, Y, q[j,i])
+            ha.plot_wireframe(X, Y, q[j,i,0:ny+10*i,:], color='black')
+            ha.plot_surface(X, Y, q[j,i,0:ny+10*i,:],cmap=cm.coolwarm)
             action = 'hit' if j == 0 else 'stick'
-            ha.set_title('Wireframe for special cards = ' + str(i) + ', action = ' + action);
+            ha.set_title('Surface plot for special cards = ' + str(i) + ', action = ' + action);
     plt.show()
 
 def plotMap(q):
     nx, ny = 10, 32
     x = range(nx)
-    y = range(ny)
     for i in range(4):
+        y = range(-10*i,ny)
         hf = plt.figure()
         ha = hf.add_subplot(111)
+        plt.xlabel('Dealer Card')
+        plt.ylabel('Player Sum')
         plt.xticks(range(nx), range(1,nx+1))
-        ha.imshow(np.argmax(q[:,0,:,:], axis=0), cmap=cmap.hot)
+        ha.yaxis.set_major_locator(ticker.MultipleLocator(5))
+        ha.imshow(np.argmax(q[:,i,0:ny+10*i,:], axis=0), cmap=cmap.coolwarm)
         ha.set_title('Optimum action = ' + str(i));
     plt.show()
 
 def plotPerf(df, hue):
-    sns.lmplot(x='episode',y='reward',data=df, fit_reg=True, lowess=True, hue=hue) 
+    sns.lmplot(x='episode',y='reward',data=df, fit_reg=True, order=2, hue=hue) 
     plt.show()
 
 def plotPerfBar(df, hue, title):
