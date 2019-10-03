@@ -4,19 +4,19 @@ from operator import add
 import pandas as pd
 from statistics import stdev, mean
 
-def plotPredictionMC(runs, everyVisit):
+def plotPredictionMC(runs, episodes, everyVisit, save):
     val = np.zeros((4,62,10))
     for i in range(runs):
-        v = MonteCarlo(basicPolicy, 1000000, everyVisit)
+        v = MonteCarlo(basicPolicy, episodes, everyVisit)
         val += v
-    plot(np.divide(val, runs))
+    plot(np.divide(val, runs), 'mc'+('e-' if everyVisit else 'f-')+str(runs))
 
-def plotPredictionTD(runs, k):
+def plotPredictionTD(runs, episodes, k, save):
     val = np.zeros((4,62,10))
     for i in range(runs):
-        v = TD(basicPolicy, 1000000, 0.7, 0.01, k)
+        v = TD(basicPolicy, episodes, 0.7, 0.1, k)
         val += v
-    plot(np.divide(val, runs))
+    plot(np.divide(val, runs), 'td-'+str(k)+'-'+str(episodes) if save else None)
 
 def plotRewards(algos, runs, episodes):
     df = pd.DataFrame() 
@@ -48,7 +48,7 @@ def run(q, episodes, mycards, dealercards):
             sp, sh = state.special, state.sum
             # print(sp, sh)
             if dealer > 0:
-                action = np.argmax(q[:,sp,sh,dealer-1])
+                action = np.argmax(q[:,sp,sh+10*sp,dealer-1])
             else:
                 action = 'stick'
             state, reward, done = sim.step(revertAction(action))
@@ -113,19 +113,21 @@ def plotValueFunction(algo, episodes, alpha):
 ############################################################
 ############# Plot prediction of basic policy ##############
 ############################################################
-# for runs in [100, 10000]:
+# for episodes in [100, 1000, 10000]:
 #     for k in [1, 3, 5, 10, 100, 1000]:
-#         plotPredictionTD(runs, k)
-# plotPredictionMC(100, False) # First visit MC
-# plotPredictionMC(100, True)  # Every visit MC
+#         plotPredictionTD(1, episodes, k, False)
+# plotPredictionMC(1, 1000000, False, False) # First visit MC
+# plotPredictionMC(1, 1000000, True, False)  # Every visit MC
 
 
 ############################################################
 ############ Plot Q value functions and policy##############
 ############################################################
-# q, _ = sarsa(5, 100000, 0.7, 0.01, 0.1, False)
+# q, _ = sarsa(10, 1000000, 0.7, 0.01, 0.1, False)
 # q, _ = Q(5, 1000000, 0.7, 0.01, 0.1)
 # q, _ = tdLambda(1000000, 0.7, 0.01, 0.1, 0.5)
+# plotQ(q, 'ql-q-10')
+# plotMap(q, 'ql-policy-10')
 # plotQ(q)
 # plotMap(q)
 
@@ -143,8 +145,10 @@ def plotValueFunction(algo, episodes, alpha):
 #              ['sarsa100', 100, True], 
 #              ['sarsa1000', 1000, True]], 100, 100)
 
-# plotRewards([['sarsa10', 10, False], 
-#              ['sarsa10decay', 10, True], 
+# plotRewards([['sarsa1', 1, False], 
+#              ['sarsa1decay', 1, True], 
+#              ['sarsa1000', 1000, False], 
+#              ['sarsa1000decay', 1000, True], 
 #              ['q'], 
 #              ['tdLambda', 0.5, True]], 100, 100)
 
@@ -152,20 +156,17 @@ def plotValueFunction(algo, episodes, alpha):
 ############################################################
 ############## Plot performance comparison #################
 ############################################################
+
 # plotPerformanceTest([['sarsa1', 1, False], 
 #              ['sarsa10', 10, False], 
 #              ['sarsa100', 100, False], 
-#              ['sarsa1000', 1000, False]], 100000, 100)
-
-# plotPerformanceTest([['sarsa1', 1, True], 
-#              ['sarsa10', 10, True], 
-#              ['sarsa100', 100, True], 
-#              ['sarsa1000', 1000, True]], 100000, 100)
-
-# plotPerformanceTest([['sarsa10', 10, False], 
+#              ['sarsa1000', 1000, False],
+#              ['sarsa1decay', 1, True], 
 #              ['sarsa10decay', 10, True], 
+#              ['sarsa100decay', 100, True], 
+#              ['sarsa1000decay', 1000, True],
 #              ['q'], 
-#              ['tdLambda', 0.5, True]], 100000, 100)
+#              ['tdLambda', 0.5, True]], 500000, 100)
 
 
 ############################################################
@@ -179,10 +180,12 @@ def plotValueFunction(algo, episodes, alpha):
 # plotPerformanceAlpha([['sarsa1', 1, True], 
 #              ['sarsa10', 10, True], 
 #              ['sarsa100', 100, True], 
-#              ['sarsa1000', 1000, True]], 100000, 10, [0.1, 0.2, 0.3, 0.4, 0.5])
+#              ['sarsa1000', 1000, True]], 100000, 100, [0.1, 0.2, 0.3, 0.4, 0.5])
 
-# plotPerformanceAlpha([['sarsa10', 10, False], 
-#              ['sarsa10decay', 10, True], 
+# plotPerformanceAlpha([['sarsa1', 1, False], 
+#              ['sarsa1decay', 1, True], 
+#              ['sarsa1000', 1000, False], 
+#              ['sarsa1000decay', 1000, True], 
 #              ['q'], 
 #              ['tdLambda', 0.5, True]], 100000, 100, [0.1, 0.2, 0.3, 0.4, 0.5])
 
@@ -191,5 +194,5 @@ def plotValueFunction(algo, episodes, alpha):
 ############################################################
 ################### Plot value function ####################
 ############################################################
-# plotValueFunction(['tdLambda', 0.5, True], 400000, 0.1)
-# plotValueFunction(['sarsa1', 1, True], 400000, 0.1)
+# plotValueFunction(['tdLambda', 0.5, True], 1000000, 0.1)
+# plotValueFunction(['sarsa10', 10, True], 1000000, 0.1)

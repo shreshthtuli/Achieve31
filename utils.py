@@ -24,7 +24,7 @@ def basicPolicy(state):
         return "stick"
     return "hit"
 
-def plot(val):
+def plot(val, name=None):
     nx, ny = 10, 32
     x = range(nx)
     for i in range(4):
@@ -40,9 +40,13 @@ def plot(val):
         ha.plot_wireframe(X, Y, val[i,0:ny+10*i,:], color='black')
         ha.plot_surface(X, Y, val[i,0:ny+10*i,:],cmap=cm.coolwarm)
         ha.set_title('Surface plot for special cards = ' + str(i));
-    plt.show()
+        ha.view_init(elev=25, azim=-7)
+        if name:
+            hf.savefig(name+'-'+str(i)+'.png')
+    if not name:
+        plt.show()
 
-def plotQ(q):
+def plotQ(q, name=None):
     nx, ny = 10, 32
     x = range(nx)
     for i in range(4):
@@ -60,9 +64,12 @@ def plotQ(q):
             ha.plot_surface(X, Y, q[j,i,0:ny+10*i,:],cmap=cm.coolwarm)
             action = 'hit' if j == 0 else 'stick'
             ha.set_title('Surface plot for special cards = ' + str(i) + ', action = ' + action);
-    plt.show()
+            if name:
+                hf.savefig(name+'-'+str(i)+'-'+action+'.png')
+    if name == None:
+        plt.show()
 
-def plotMap(q):
+def plotMap(q, name=None):
     nx, ny = 10, 32
     x = range(nx)
     for i in range(4):
@@ -75,11 +82,15 @@ def plotMap(q):
         ha.yaxis.set_major_locator(ticker.MultipleLocator(5))
         ha.imshow(np.argmax(q[:,i,0:ny+10*i,:], axis=0), cmap=cmap.coolwarm)
         ha.set_title('Optimum action = ' + str(i));
-    plt.show()
+        if name:
+            hf.savefig(name+'-'+str(i)+'.png')
+    if name == None:
+        plt.show()
 
 def plotPerf(df, hue, x, y):
     sns.lineplot(x=x,y=y,data=df, hue=hue) 
-    plt.show()
+    plt.savefig('test'+str(np.random.random())+'.png')
+    # plt.show()
 
 def plotPerfBar(df, title, x, y):
     sns.set(style="whitegrid")
