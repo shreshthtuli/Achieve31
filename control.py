@@ -57,11 +57,9 @@ def updateQLambda(q, history, dealer, gamma, alpha, l):
 
 def sarsa(k, episodes, gamma, alpha, e, adaptive=False):
     q = np.zeros((2,4,62,10))
-    e1 = e
+    e1 = e; updates = 0
     rewards = []
     for episode in tqdm(range(episodes)):
-        if adaptive:
-            e = e1/(episode + 1)
         state = sim.reset(); dealer = sim.dealerCard
         history = []
         a = eGreedy(state, q, e, dealer) if dealer > 0 else 'hit' # a
@@ -69,6 +67,8 @@ def sarsa(k, episodes, gamma, alpha, e, adaptive=False):
             sp, sh = state.special, state.sum # s
             state, reward, done = sim.step(a) # s', r
             aPrime = eGreedy(state, q, e, dealer) if not done else 'hit' # a'
+            if adaptive:
+                e = e1/(episodes + 1); updates += 1
             history.append((sp, sh, convertAction(a), reward)) # sars'a'
             a = aPrime
             if done: 

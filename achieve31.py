@@ -126,9 +126,9 @@ def plotValueFunction(algo, episodes, alpha):
 ############################################################
 # q, _ = sarsa(10, 1000000, 0.7, 0.01, 0.1, False)
 # q, _ = Q(5, 1000000, 0.7, 0.01, 0.1)
-q, _ = tdLambda(1000000, 0.7, 0.1, 0.1, 0.5, True)
-plotQ(q, 'tdl-q-0.5')
-plotMap(q, 'tdl-policy-0.5')
+# q, _ = tdLambda(1000000, 0.7, 0.1, 0.1, 0.5, True)
+# plotQ(q, 'tdl-q-0.5')
+# plotMap(q, 'tdl-policy-0.5')
 # plotQ(q)
 # plotMap(q)
 
@@ -147,11 +147,16 @@ plotMap(q, 'tdl-policy-0.5')
 #              ['sarsa1000', 1000, True]], 100, 100)
 
 # plotRewards([['sarsa1', 1, False], 
+#              ['sarsa10', 10, False], 
+#              ['sarsa1decay', 1, True], 
+#              ['sarsa10decay', 10, True]], 100, 4000)
+
+# plotRewards([['sarsa1', 1, False], 
 #              ['sarsa1decay', 1, True], 
 #              ['sarsa1000', 1000, False], 
 #              ['sarsa1000decay', 1000, True], 
 #              ['q'], 
-#              ['tdLambda', 0.5, True]], 100, 100)
+#              ['tdLambda', 0.5, True]], 20, 2000)
 
 
 ############################################################
@@ -173,10 +178,10 @@ plotMap(q, 'tdl-policy-0.5')
 ############################################################
 # Plot performance after training 100k for different alpha #
 ############################################################
-# plotPerformanceAlpha([['sarsa1', 1, False], 
-#              ['sarsa10', 10, False], 
-#              ['sarsa100', 100, False], 
-#              ['sarsa1000', 1000, False]], 100000, 100, [0.1, 0.2, 0.3, 0.4, 0.5])
+plotPerformanceAlpha([['sarsa1', 1, False], 
+             ['sarsa10', 10, False], 
+             ['sarsa100', 100, False], 
+             ['sarsa1000', 1000, False]], 100000, 100, [0.1, 0.2, 0.3, 0.4, 0.5])
 
 # plotPerformanceAlpha([['sarsa1', 1, True], 
 #              ['sarsa10', 10, True], 
