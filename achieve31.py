@@ -9,7 +9,7 @@ def plotPredictionMC(runs, episodes, everyVisit, save):
     for i in range(runs):
         v = MonteCarlo(basicPolicy, episodes, everyVisit)
         val += v
-    plot(np.divide(val, runs), 'mc'+('e-' if everyVisit else 'f-')+str(runs))
+    plot(np.divide(val, runs), 'mc'+('e-' if everyVisit else 'f-')+str(runs) if save else None)
 
 def plotPredictionTD(runs, episodes, k, save):
     val = np.zeros((4,62,10))
@@ -113,9 +113,10 @@ def plotValueFunction(algo, episodes, alpha):
 ############################################################
 ############# Plot prediction of basic policy ##############
 ############################################################
-# for episodes in [100, 1000, 10000]:
+# episodes = 100000
+# for runs in [2, 5]:
 #     for k in [1, 3, 5, 10, 100, 1000]:
-#         plotPredictionTD(1, episodes, k, False)
+#         plotPredictionTD(runs, episodes, k, True)
 # plotPredictionMC(1, 1000000, False, False) # First visit MC
 # plotPredictionMC(1, 1000000, True, False)  # Every visit MC
 
@@ -125,9 +126,9 @@ def plotValueFunction(algo, episodes, alpha):
 ############################################################
 # q, _ = sarsa(10, 1000000, 0.7, 0.01, 0.1, False)
 # q, _ = Q(5, 1000000, 0.7, 0.01, 0.1)
-# q, _ = tdLambda(1000000, 0.7, 0.01, 0.1, 0.5)
-# plotQ(q, 'ql-q-10')
-# plotMap(q, 'ql-policy-10')
+q, _ = tdLambda(1000000, 0.7, 0.1, 0.1, 0.5, True)
+plotQ(q, 'tdl-q-0.5')
+plotMap(q, 'tdl-policy-0.5')
 # plotQ(q)
 # plotMap(q)
 

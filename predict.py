@@ -33,7 +33,7 @@ def updateTD(val, history, dealer, gamma, alpha, k):
 
 def TD(policy, episodes, gamma, alpha, k):
     val = np.zeros((4,62,10))
-    val += 1
+    # val += 1
     for e in tqdm(range(episodes)):
         state = sim.reset(); dealer = sim.dealerCard
         history = []

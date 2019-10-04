@@ -43,7 +43,7 @@ def plot(val, name=None):
         ha.view_init(elev=25, azim=-7)
         if name:
             hf.savefig(name+'-'+str(i)+'.png')
-    if not name:
+    if name == None:
         plt.show()
 
 def plotQ(q, name=None):
